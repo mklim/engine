@@ -505,23 +505,24 @@ void verify_b143464703() {
     SceneBuilder builder = SceneBuilder();
     builder.pushOffset(0.0, 0.0); // base
 
-    // Background
+    // Gray background.
     builder.addPicture(Offset(0.0, 0.0), CreateColoredBox(Color.fromARGB(255, 128, 128, 128), Size(1024.0, 600.0)));
 
+    // Small indigo square in the bottom left corner.
     builder.pushOpacity(128);
     builder.addPicture(Offset(10.0, 10.0), CreateColoredBox(Color.fromARGB(255, 0, 0, 255), Size(25.0, 25.0)));
     builder.pop(); // opacity 128
 
-    // The top bar and the platform view are pushed to the side.
+    // The rainbow side bar and the platform view are pushed to the side.
     builder.pushOffset(135.0, 0.0); // 1
     builder.pushOpacity(128); // opacity
 
-    // Platform view offset from the top
+    // Offset a neon green Platform View from the bottom.
     builder.pushOffset(0.0, 60.0); // 2
     builder.addPlatformView(42, width: 1024.0, height: 540.0);
     builder.pop(); // 2
 
-    // Top bar
+    // Rainbow side bar.
     builder.addPicture(Offset(0.0, 0.0), CreateGradientBox(Size(1024.0, 60.0)));
 
     builder.pop(); // opacity
