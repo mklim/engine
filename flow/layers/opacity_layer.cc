@@ -47,13 +47,17 @@ void OpacityLayer::Preroll(PrerollContext* context, const SkMatrix& matrix) {
   // See |EnsureSingleChild|.
   FML_DCHECK(layers().size() == 1);
   if (!context->has_platform_view && context->raster_cache &&
+  // if (context->view_embedder == nullptr && context->raster_cache &&
       SkRect::Intersects(context->cull_rect, paint_bounds())) {
     Layer* child = layers()[0].get();
+    FML_LOG(ERROR) << "xyzzy OpacityLayer::Preroll on " << unique_id() << ", preparing raster cache for " << child->unique_id();
     SkMatrix ctm = child_matrix;
 #ifndef SUPPORT_FRACTIONAL_TRANSLATION
     ctm = RasterCache::GetIntegralTransCTM(ctm);
 #endif
     context->raster_cache->Prepare(context, child, ctm);
+  } else {
+    FML_LOG(ERROR) << "xyzzy OpacityLayer::Preroll NOT prepping raster cache for " << unique_id();
   }
 }
 
@@ -76,10 +80,14 @@ void OpacityLayer::Paint(PaintContext& context) const {
   FML_DCHECK(layers().size() == 1);
 
   if (context.raster_cache) {
+  // if (false) {
     const SkMatrix& ctm = context.leaf_nodes_canvas->getTotalMatrix();
     RasterCacheResult child_cache =
         context.raster_cache->Get(layers()[0].get(), ctm);
     if (child_cache.is_valid()) {
+      FML_LOG(ERROR) << "xyzzy OpacityLayer::Paint for " << unique_id() << ", using cache for " << layers()[0]->unique_id();
+      FML_LOG(ERROR) << "      child cache size " << child_cache.image_dimensions().fWidth << ", " << child_cache.image_dimensions().fHeight;
+      FML_LOG(ERROR) << "      canvas is " << context.leaf_nodes_canvas;
       child_cache.draw(*context.leaf_nodes_canvas, &paint);
       return;
     }

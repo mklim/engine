@@ -52,10 +52,13 @@ void PictureLayer::Paint(PaintContext& context) const {
     const SkMatrix& ctm = context.leaf_nodes_canvas->getTotalMatrix();
     RasterCacheResult result = context.raster_cache->Get(*picture(), ctm);
     if (result.is_valid()) {
+      FML_LOG(ERROR) << "xyzzy PictureLayer::Paint using RasterCacheResult for " << unique_id();
       result.draw(*context.leaf_nodes_canvas);
       return;
     }
   }
+  FML_LOG(ERROR) << "xyzzy PictureLayer::Paint drawing " << unique_id() << " to " << context.leaf_nodes_canvas;
+  FML_LOG(ERROR) << "                          context->gr_context = " << context.gr_context;
   context.leaf_nodes_canvas->drawPicture(picture());
 }
 
