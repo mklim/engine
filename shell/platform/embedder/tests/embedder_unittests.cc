@@ -669,12 +669,12 @@ TEST_F(EmbedderTest, RasterCacheDisabledWithPlatformViews) {
   auto& context = GetEmbedderContext();
 
   EmbedderConfigBuilder builder(context);
-  builder.SetOpenGLRendererConfig(SkISize::Make(800, 600));
+  builder.SetSoftwareRendererConfig(SkISize::Make(800, 600));
   builder.SetCompositor();
   builder.SetDartEntrypoint("can_composite_platform_views_with_opacity");
 
   context.GetCompositor().SetRenderTargetType(
-      EmbedderTestCompositor::RenderTargetType::kOpenGLFramebuffer);
+      EmbedderTestCompositor::RenderTargetType::kSoftwareBuffer);
 
   fml::CountDownLatch setup(3);
   fml::CountDownLatch verify(1);
@@ -682,55 +682,6 @@ TEST_F(EmbedderTest, RasterCacheDisabledWithPlatformViews) {
   context.GetCompositor().SetNextPresentCallback(
       [&](const FlutterLayer** layers, size_t layers_count) {
         ASSERT_EQ(layers_count, 3u);
-
-        {
-          FlutterBackingStore backing_store = *layers[0]->backing_store;
-          backing_store.struct_size = sizeof(backing_store);
-          backing_store.type = kFlutterBackingStoreTypeOpenGL;
-          backing_store.did_update = true;
-          backing_store.open_gl.type = kFlutterOpenGLTargetTypeFramebuffer;
-
-          FlutterLayer layer = {};
-          layer.struct_size = sizeof(layer);
-          layer.type = kFlutterLayerContentTypeBackingStore;
-          layer.backing_store = &backing_store;
-          layer.size = FlutterSizeMake(800.0, 600.0);
-          layer.offset = FlutterPointMake(0, 0);
-
-          ASSERT_EQ(*layers[0], layer);
-        }
-
-        {
-          FlutterPlatformView platform_view = {};
-          platform_view.struct_size = sizeof(platform_view);
-          platform_view.identifier = 42;
-
-          FlutterLayer layer = {};
-          layer.struct_size = sizeof(layer);
-          layer.type = kFlutterLayerContentTypePlatformView;
-          layer.platform_view = &platform_view;
-          layer.size = FlutterSizeMake(123.0, 456.0);
-          layer.offset = FlutterPointMake(1.0, 2.0);
-
-          ASSERT_EQ(*layers[1], layer);
-        }
-
-        {
-          FlutterBackingStore backing_store = *layers[2]->backing_store;
-          backing_store.struct_size = sizeof(backing_store);
-          backing_store.type = kFlutterBackingStoreTypeOpenGL;
-          backing_store.did_update = true;
-          backing_store.open_gl.type = kFlutterOpenGLTargetTypeFramebuffer;
-
-          FlutterLayer layer = {};
-          layer.struct_size = sizeof(layer);
-          layer.type = kFlutterLayerContentTypeBackingStore;
-          layer.backing_store = &backing_store;
-          layer.size = FlutterSizeMake(800.0, 600.0);
-          layer.offset = FlutterPointMake(0.0, 0.0);
-
-          ASSERT_EQ(*layers[2], layer);
-        }
 
         setup.CountDown();
       });
