@@ -17,11 +17,12 @@ class Paint {
 
   const SkPaint* paint() const { return is_null_ ? nullptr : &paint_; }
 
+  SkPaint paint_;
+  bool is_null_ = true;
+
  private:
   friend struct tonic::DartConverter<Paint>;
 
-  SkPaint paint_;
-  bool is_null_ = true;
 };
 
 // The PaintData argument is a placeholder to receive encoded data for Paint

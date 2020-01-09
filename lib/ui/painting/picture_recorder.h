@@ -27,6 +27,7 @@ class PictureRecorder : public RefCountedDartWrappable<PictureRecorder> {
 
   SkCanvas* BeginRecording(SkRect bounds);
   fml::RefPtr<Picture> endRecording();
+  sk_sp<SkPicture> endRecordingDebug();
   bool isRecording();
 
   void set_canvas(fml::RefPtr<Canvas> canvas) { canvas_ = std::move(canvas); }

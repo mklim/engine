@@ -60,4 +60,14 @@ fml::RefPtr<Picture> PictureRecorder::endRecording() {
   return picture;
 }
 
+sk_sp<SkPicture> PictureRecorder::endRecordingDebug() {
+  if (!isRecording())
+    return nullptr;
+
+  sk_sp<SkPicture> picture = picture_recorder_.finishRecordingAsPicture();
+  canvas_->Clear();
+  canvas_ = nullptr;
+  return picture;
+}
+
 }  // namespace flutter
